@@ -2,6 +2,7 @@
     import MagnifyingGlass from "@/Components/Icons/MagnifyingGlass.vue";
     import { Link, Head } from "@inertiajs/vue3";
     import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+    import Pagination from "@/Components/Pagination.vue";
 
     defineProps({
         students: {
