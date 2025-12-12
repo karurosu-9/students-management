@@ -2,7 +2,7 @@
 import { router } from '@inertiajs/vue3';
 
 defineProps({
-    data: {              // ここのdataはLaravelのpaginate()が返す値のこと
+    linkData: {              // ここのdataはLaravelのpaginate()が返す値のこと
         type: Object,
         required: true
     }
@@ -15,6 +15,17 @@ const updatedPageNumber = (link) => {
         preserveScroll: true // リンクを押した際にスクロールが上部に行かないように、位置を保持するオプション
     });
 }
+
+// ページネーションの最初と最後の文言を「前」と「次」への表示に変換
+const convertLabel = (label) => {
+    if (label.includes("pagination.previous")) {
+        return "前";
+    }
+    if (label.includes("pagination.next")) {
+        return "次";
+    }
+    return label;
+};
 </script>
 
 <template>
@@ -30,19 +41,19 @@ const updatedPageNumber = (link) => {
                     >
                         <div>
                             <p class="text-sm text-gray-700">
-                                Showing
+                                総表示件数
                                 <!-- space -->
-                                <span class="font-medium">{{ data.meta.from }}</span>
+                                <span class="font-medium">{{ linkData.meta.total }}</span>
                                 <!-- space -->
-                                to
+                                 件中　　
                                 <!-- space -->
-                                <span class="font-medium">{{ data.meta.to }}</span>
+                                <span class="font-medium">{{ linkData.meta.from }}</span>
                                 <!-- space -->
-                                of
+                                〜
                                 <!-- space -->
-                                <span class="font-medium">{{ data.meta.total }}</span>
+                                <span class="font-medium">{{ linkData.meta.to }}</span>
                                 <!-- space -->
-                                results
+                                件表示
                             </p>
                         </div>
                         <div>
@@ -52,7 +63,7 @@ const updatedPageNumber = (link) => {
                             >
                                 <button
                                     @click.prevent="updatedPageNumber(link)"
-                                    v-for="(link, index) in data.meta.links"
+                                    v-for="(link, index) in linkData.meta.links"
                                     :key="index"
                                     :disabled="link.active || !link.url"
                                     class="relative inline-flex items-center px-4 py-2 border text-sm font-medium"
@@ -61,7 +72,7 @@ const updatedPageNumber = (link) => {
                                         'bg-white border-gray-300 text-gray-500 hover:bg-gray-50': !link.active,
                                     }"
                                 >
-                                    <span v-html="link.label "></span>
+                                    <span v-html="convertLabel(link.label)"></span>
                                 </button>
                             </nav>
                         </div>

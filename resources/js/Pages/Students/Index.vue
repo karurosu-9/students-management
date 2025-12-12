@@ -175,7 +175,7 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <Pagination :data="students" />
+                                <Pagination :linkData="students" />
                             </div>
                         </div>
                     </div>
