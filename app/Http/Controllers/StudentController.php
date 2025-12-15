@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreStudentRequest;
+use App\Http\Requests\UpdateStudentRequest;
 use App\Http\Resources\ClassesResource;
 use App\Http\Resources\StudentResource;
 use App\Models\Classes;
@@ -39,6 +40,29 @@ class StudentController extends Controller
             'class_id' => $request->class_id,
             'section_id' => $request->section_id
         ]);
+
+        return redirect(route('students.index'));
+    }
+
+    public function edit(Student $student)
+    {
+        $classes = ClassesResource::collection(Classes::all());
+
+        $student->load('class', 'section');
+
+        return Inertia::render('Students/Edit',[
+            'classes' => $classes,
+            'student' => StudentResource::make($student) // 複数件のStudentsのデータであれば、StudentResource::collection()を使用する ※今回は1件のデータなのでmake()
+        ]);
+    }
+
+    public function update(UpdateStudentRequest $request, Student $student)
+    {
+        $student->name = $request->name;
+        $student->email = $request->email;
+        $student->class_id = $request->class_id;
+        $student->section_id = $request->section_id;
+        $student->save();
 
         return redirect(route('students.index'));
     }
