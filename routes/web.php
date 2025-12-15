@@ -25,7 +25,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-
+// Studentのルーティング設定
 Route::resource('students', StudentController::class)->middleware('auth');
 
 require __DIR__.'/auth.php';

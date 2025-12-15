@@ -72,4 +72,14 @@ class StudentController extends Controller
             'message' => '更新が完了しました。'
         ]);;
     }
+
+    public function destroy(Student $student)
+    {
+        $student->delete();
+
+        return redirect(route('students.index'))->with([
+            'status' => 'delete',
+            'message' => '削除が完了しました。'
+        ]);
+    }
 }

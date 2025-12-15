@@ -1,6 +1,6 @@
 <script setup>
     import MagnifyingGlass from "@/Components/Icons/MagnifyingGlass.vue";
-    import { Link, Head } from "@inertiajs/vue3";
+    import { Link, Head, useForm } from "@inertiajs/vue3";
     import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
     import Pagination from "@/Components/Pagination.vue";
 
@@ -10,6 +10,15 @@
             required: true, // コントローラー側からデータの送信が必須になるので、これを設定　※開発者ツールに警告が出る
         }
     })
+
+    // コントローラーのdestroyアクションに送信するために変数にしている
+    const deleteForm = useForm();
+
+    const deleteStudent = (studentId) => {
+        if (confirm('この生徒を削除してもよろしいですか？')) {
+            deleteForm.delete(route('students.destroy', studentId)); // deleteForm.delete()はform.delete()のようなことをしている
+        };
+    };
 </script>
 
 <template>
@@ -166,6 +175,7 @@
                                                         Edit
                                                     </Link>
                                                     <button
+                                                        @click="deleteStudent(student.id)"
                                                         class="ml-2 text-indigo-600 hover:text-indigo-900"
                                                     >
                                                         Delete
