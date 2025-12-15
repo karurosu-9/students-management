@@ -41,7 +41,10 @@ class StudentController extends Controller
             'section_id' => $request->section_id
         ]);
 
-        return redirect(route('students.index'));
+        return redirect(route('students.index'))->with([
+            'status' => 'success',
+            'message' => '登録が完了しました。'
+        ]);
     }
 
     public function edit(Student $student)
@@ -64,6 +67,9 @@ class StudentController extends Controller
         $student->section_id = $request->section_id;
         $student->save();
 
-        return redirect(route('students.index'));
+        return redirect(route('students.index'))->with([
+            'status' => 'success',
+            'message' => '更新が完了しました。'
+        ]);;
     }
 }
