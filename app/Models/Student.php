@@ -13,6 +13,19 @@ class Student extends Model
 
     protected $fillable = ['class_id', 'section_id', 'name', 'email'];
 
+    // 生徒検索用スコープ
+    public function scopeSearchCustomers($query, $input = null)
+    {
+        if(!empty($input)) {
+            $query->where(function ($q) use ($input) { // where()をグルーピングしてwhere()の将来的な拡張対策
+                $q->where('name','like', $input . '%')
+                    ->orWhere('email', 'like', '%' . $input . '%');
+            });
+        };
+
+        return $query;
+    }
+
     public function class()
     {
         return $this->belongsTo(Classes::class, 'class_id');

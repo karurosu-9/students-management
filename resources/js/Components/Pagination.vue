@@ -2,17 +2,19 @@
 import { router } from '@inertiajs/vue3';
 
 defineProps({
-    linkData: {              // ここのdataはLaravelのpaginate()が返す値のこと
+    linkData: {              // ここのlinkDataはLaravelのpaginate()が返す値のこと
         type: Object,
         required: true
     }
 });
 
 const updatedPageNumber = (link) => {
-    let pageNumber = link.url.split("=")[1]; // "students?page=3".split("=")となり、["students?page","3"]と配列にして"3"の方を変数に入れている
+    if (!link.url) return;
 
-    router.visit('/students?page=' + pageNumber, {
-        preserveScroll: true // リンクを押した際にスクロールが上部に行かないように、位置を保持するオプション
+    router.visit(link.url, {
+        preserveScroll: true, // リンクを押した際にスクロールが上部に行かないように、位置を保持するオプション
+        preserveState: true, // 検索入力欄や表示状態も保つオプション
+        replace: true, // ページネーションのリンクや「戻る」ボタンを押しても、検索の履歴の維持
     });
 }
 

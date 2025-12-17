@@ -13,12 +13,30 @@ use Inertia\Inertia;
 
 class StudentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $students = StudentResource::collection(Student::with('class', 'section')->paginate(10));
+        $searchWord = $request->search;
+        $classId = $request->class_id;
+
+        $students = Student::searchCustomers($searchWord)               // 検索ワードでの絞り込みを行う
+                        ->when($classId, function ($q) use ($classId) { // class_idでの絞り込みを行う
+                            $q->where('class_id', $classId);
+                        })
+                        ->with('class', 'section')
+                        ->select('id', 'name', 'email', 'class_id', 'section_id', 'created_at')
+                        ->orderBy('id', 'asc')
+                        ->paginate(10)
+                        ->withQueryString(); // withQueryString()で、検索結果の維持などを行う
+
+        $classes = Classes::all();
 
         return Inertia::render('Students/Index', [
-            'students' => $students
+            'students' => StudentResource::collection($students),
+            'classes' => ClassesResource::collection($classes),
+            'filters' => [
+                'search' => $searchWord,
+                'class_id' => $classId
+            ]
         ]);
     }
 

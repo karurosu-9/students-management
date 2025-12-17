@@ -1,15 +1,40 @@
 <script setup>
     import MagnifyingGlass from "@/Components/Icons/MagnifyingGlass.vue";
-    import { Link, Head, useForm } from "@inertiajs/vue3";
+    import { Link, Head, useForm, router } from "@inertiajs/vue3";
     import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
     import Pagination from "@/Components/Pagination.vue";
+import { ref } from "vue";
 
-    defineProps({
+    const props = defineProps({
         students: {
             type: Object,
             required: true, // コントローラー側からデータの送信が必須になるので、これを設定　※開発者ツールに警告が出る
-        }
+        },
+        classes: Object,
+        filters: Object // 検索ワードを受け取る
     })
+
+    const search = ref(props.filters?.search ?? ''); // 検索ワード
+    const class_id = ref(props.filters?.class_id ?? ''); // クラスでの絞り込み
+
+    const searchCustomers = () => {
+        const params = {};
+
+        if (search.value?.trim()) {
+            params.search = search.value
+        };
+
+        if (class_id.value) {
+            params.class_id = class_id.value
+        }
+
+        router.get(route('students.index'), params, // params{}内に{search: search.value, class_id: class_id.value}が格納されている
+            {
+                preserveState: true, // 検索ワードの維持
+                replace: true // ページネーションのリンクや「戻る」ボタンを押しても、検索の履歴の維持
+            }
+        );
+    };
 
     // コントローラーのdestroyアクションに送信するために変数にしている
     const deleteForm = useForm();
@@ -54,7 +79,7 @@
                     </div>
 
                     <div class="flex flex-col justify-between sm:flex-row mt-6">
-                        <div class="relative text-sm text-gray-800 col-span-3">
+                        <div class="relative flex items-center text-sm text-gray-800 col-span-3">
                             <div
                                 class="absolute pl-2 left-0 top-0 bottom-0 flex items-center pointer-events-none text-gray-500"
                             >
@@ -62,14 +87,40 @@
                                 <MagnifyingGlass />
                             </div>
 
+                            <!-- 検索入力欄 -->
                             <input
+                                v-model="search"
                                 type="text"
                                 autocomplete="off"
                                 placeholder="Search students data..."
                                 id="search"
+                                name="search"
                                 class="block rounded-lg border-0 py-2 pl-10 text-gray-900 ring-1 ring-inset ring-gray-200 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             />
+                            <button
+                                class="bg-blue-500 text-white py-2 px-2 ml-2"
+                                @click="searchCustomers"
+                                @keyup.enter="searchCustomers"
+                            >
+                                検索
+                            </button>
+                            <select
+                                v-model="class_id"
+                                @change="searchCustomers"
+                                name="class_id"
+                                id="class_id"
+                                class="block rounded-lg border-0 py-2 ml-5 text-gray-900
+                                    ring-1 ring-inset ring-gray-200 placeholder:text-gray-400
+                                    sm:text-sm sm:leading-6">
+                                <option value="">Filter By Class</option>
+                                <option
+                                    v-for="c in classes.data" :key="c.id"
+                                    :value="c.id">
+                                        {{ c.name }}
+                                </option>
+                            </select>
                         </div>
+
                     </div>
 
                     <div class="mt-8 flex flex-col">
