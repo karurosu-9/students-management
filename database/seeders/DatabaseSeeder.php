@@ -25,6 +25,11 @@ class DatabaseSeeder extends Seeder
         // ダミーデータの作成
         $this->call([
             DemoClassesSectionsStudentsSeeder::class,
+            UsersTableSeeder::class,
+            RolesTableSeeder::class,
+            PermissionsTableSeeder::class,
+            PermissionRoleTableSeeder::class,
+            RoleUserTableSeeder::class
         ]);
     }
 }
