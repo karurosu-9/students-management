@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreRoleRequest;
 use App\Http\Resources\RoleResource;
 use App\Models\Role;
 use Illuminate\Http\Request;
@@ -15,6 +16,23 @@ class RoleController extends Controller
 
         return Inertia::render('Roles/Index', [
             'roles' => $roles
+        ]);
+    }
+
+    public function create()
+    {
+        return Inertia::render('Roles/Create');
+    }
+
+    public function Store(StoreRoleRequest $request)
+    {
+        Role::create([
+            'title' => $request->title
+        ]);
+
+        return redirect(route('roles.index'))->with([
+            'status' => 'success',
+            'message' => '権限の登録が完了いたしました。'
         ]);
     }
 
