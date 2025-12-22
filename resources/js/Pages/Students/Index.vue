@@ -1,49 +1,53 @@
 <script setup>
-    import MagnifyingGlass from "@/Components/Icons/MagnifyingGlass.vue";
-    import { Link, Head, useForm, router } from "@inertiajs/vue3";
-    import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-    import Pagination from "@/Components/Pagination.vue";
+import MagnifyingGlass from "@/Components/Icons/MagnifyingGlass.vue";
+import { Link, Head, useForm, router } from "@inertiajs/vue3";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import Pagination from "@/Components/Pagination.vue";
 import { ref } from "vue";
 
-    const props = defineProps({
-        students: {
-            type: Object,
-            required: true, // コントローラー側からデータの送信が必須になるので、これを設定　※開発者ツールに警告が出る
-        },
-        classes: Object,
-        filters: Object // 検索ワードを受け取る
-    })
+const props = defineProps({
+    students: {
+        type: Object,
+        required: true, // コントローラー側からデータの送信が必須になるので、これを設定　※開発者ツールに警告が出る
+    },
+    classes: Object,
+    filters: Object, // 検索ワードを受け取る
+});
 
-    const search = ref(props.filters?.search ?? ''); // 検索ワード
-    const class_id = ref(props.filters?.class_id ?? ''); // クラスでの絞り込み
+const search = ref(props.filters?.search ?? ""); // 検索ワード
+const class_id = ref(props.filters?.class_id ?? ""); // クラスでの絞り込み
 
-    const searchCustomers = () => {
-        const params = {};
+const searchCustomers = () => {
+    const params = {};
 
-        if (search.value?.trim()) {
-            params.search = search.value
-        };
+    if (search.value?.trim()) {
+        params.search = search.value;
+    }
 
-        if (class_id.value) {
-            params.class_id = class_id.value
+    if (class_id.value) {
+        params.class_id = class_id.value;
+    }
+
+    router.get(
+        route("students.index"),
+        params, // params{}内に{search: search.value, class_id: class_id.value}が格納されている
+        {
+            preserveState: true, // 検索ワードの維持
+            replace: true, // ページネーションのリンクや「戻る」ボタンを押しても、検索の履歴の維持
         }
+    );
+};
 
-        router.get(route('students.index'), params, // params{}内に{search: search.value, class_id: class_id.value}が格納されている
-            {
-                preserveState: true, // 検索ワードの維持
-                replace: true // ページネーションのリンクや「戻る」ボタンを押しても、検索の履歴の維持
-            }
-        );
-    };
+// コントローラーのdestroyアクションに送信するために変数にしている
+const deleteForm = useForm();
 
-    // コントローラーのdestroyアクションに送信するために変数にしている
-    const deleteForm = useForm();
-
-    const deleteStudent = (studentId) => {
-        if (confirm('この生徒を削除してもよろしいですか？')) {
-            deleteForm.delete(route('students.destroy', studentId)); // deleteForm.delete()はform.delete()のようなことをしている
-        };
-    };
+const deleteStudent = (studentId) => {
+    if (confirm("この生徒を削除してもよろしいですか？")) {
+        deleteForm.delete(route("students.destroy", studentId), { // deleteForm.delete()はform.delete()のようなことをしている
+            preserveScroll: true // 画面の削除後もスクロール位置を保つ
+        });
+    }
+};
 </script>
 
 <template>
@@ -79,7 +83,9 @@ import { ref } from "vue";
                     </div>
 
                     <div class="flex flex-col justify-between sm:flex-row mt-6">
-                        <div class="relative flex items-center text-sm text-gray-800 col-span-3">
+                        <div
+                            class="relative flex items-center text-sm text-gray-800 col-span-3"
+                        >
                             <div
                                 class="absolute pl-2 left-0 top-0 bottom-0 flex items-center pointer-events-none text-gray-500"
                             >
@@ -109,22 +115,24 @@ import { ref } from "vue";
                                 @change="searchCustomers"
                                 name="class_id"
                                 id="class_id"
-                                class="block rounded-lg border-0 py-2 ml-5 text-gray-900
-                                    ring-1 ring-inset ring-gray-200 placeholder:text-gray-400
-                                    sm:text-sm sm:leading-6">
+                                class="block rounded-lg border-0 py-2 ml-5 text-gray-900 ring-1 ring-inset ring-gray-200 placeholder:text-gray-400 sm:text-sm sm:leading-6"
+                            >
                                 <option value="">Filter By Class</option>
                                 <option
-                                    v-for="c in classes.data" :key="c.id"
-                                    :value="c.id">
-                                        {{ c.name }}
+                                    v-for="c in classes.data"
+                                    :key="c.id"
+                                    :value="c.id"
+                                >
+                                    {{ c.name }}
                                 </option>
                             </select>
                         </div>
-
                     </div>
 
                     <div class="mt-8 flex flex-col">
-                        <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                        <div
+                            class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8"
+                        >
                             <div
                                 class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8"
                             >
@@ -183,7 +191,10 @@ import { ref } from "vue";
                                         <tbody
                                             class="divide-y divide-gray-200 bg-white"
                                         >
-                                            <tr v-for="student in students.data" :key="student.id">
+                                            <tr
+                                                v-for="student in students.data"
+                                                :key="student.id"
+                                            >
                                                 <td
                                                     class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
                                                 >
@@ -215,18 +226,26 @@ import { ref } from "vue";
                                                     {{ student.created_at }}
                                                 </td>
 
-
                                                 <td
                                                     class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6"
                                                 >
                                                     <Link
-                                                        :href="route('students.edit', student.id)"
+                                                        :href="
+                                                            route(
+                                                                'students.edit',
+                                                                student.id
+                                                            )
+                                                        "
                                                         class="text-indigo-600 hover:text-indigo-900"
                                                     >
                                                         Edit
                                                     </Link>
                                                     <button
-                                                        @click="deleteStudent(student.id)"
+                                                        @click="
+                                                            deleteStudent(
+                                                                student.id
+                                                            )
+                                                        "
                                                         class="ml-2 text-indigo-600 hover:text-indigo-900"
                                                     >
                                                         Delete
@@ -245,4 +264,3 @@ import { ref } from "vue";
         </div>
     </AuthenticatedLayout>
 </template>
-

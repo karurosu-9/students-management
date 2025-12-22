@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -25,7 +26,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Studentのルーティング設定
-Route::resource('students', StudentController::class)->middleware('auth');
+
+
+Route::middleware(['auth'])->group(function () {
+    // Studentのルーティング設定
+    Route::resource('students', StudentController::class);
+
+    // Roleのルーティング設定
+    Route::resource('roles', RoleController::class);
+});
 
 require __DIR__.'/auth.php';
