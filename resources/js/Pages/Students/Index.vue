@@ -43,7 +43,9 @@ const deleteForm = useForm();
 
 const deleteStudent = (studentId) => {
     if (confirm("この生徒を削除してもよろしいですか？")) {
-        deleteForm.delete(route("students.destroy", studentId)); // deleteForm.delete()はform.delete()のようなことをしている
+        deleteForm.delete(route("students.destroy", studentId), { // deleteForm.delete()はform.delete()のようなことをしている
+            preserveScroll: true // 画面の削除後もスクロール位置を保つ
+        });
     }
 };
 </script>
