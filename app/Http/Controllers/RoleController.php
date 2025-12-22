@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRoleRequest;
+use App\Http\Requests\UpdateRoleRequest;
 use App\Http\Resources\RoleResource;
 use App\Models\Role;
 use Illuminate\Http\Request;
@@ -33,6 +34,24 @@ class RoleController extends Controller
         return redirect(route('roles.index'))->with([
             'status' => 'success',
             'message' => '権限の登録が完了いたしました。'
+        ]);
+    }
+
+    public function edit(Role $role)
+    {
+        return Inertia::render('Roles/Edit', [
+            'role' => RoleResource::make($role)
+        ]);
+    }
+
+    public function update(UpdateRoleRequest $request, Role $role)
+    {
+        $role->title = $request->title;
+        $role->save();
+
+        return redirect(route('roles.index'))->with([
+            'status' => 'success',
+            'message' => '権限の更新をしました。'
         ]);
     }
 
