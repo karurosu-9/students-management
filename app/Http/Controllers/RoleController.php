@@ -13,6 +13,7 @@ class RoleController extends Controller
 {
     public function index()
     {
+        // 複数のデータをJSON化する場合は、collection()を使用
         $roles = RoleResource::collection(Role::all());
 
         return Inertia::render('Roles/Index', [
@@ -40,7 +41,7 @@ class RoleController extends Controller
     public function edit(Role $role)
     {
         return Inertia::render('Roles/Edit', [
-            'role' => RoleResource::make($role)
+            'role' => RoleResource::make($role) // 単数のデータをJSON化する場合は、make()を使用する
         ]);
     }
 
