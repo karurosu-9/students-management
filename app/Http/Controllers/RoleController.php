@@ -60,7 +60,7 @@ class RoleController extends Controller
     {
         $role->delete();
 
-        return Inertia::render('Roles/Index')->with([
+        return redirect(route('roles.index'))->with([
             'status' => 'delete',
             'message' => '権限を削除しました。'
         ]);
