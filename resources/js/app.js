@@ -1,5 +1,6 @@
 import '../css/app.css';
 import './bootstrap';
+import 'vue-select/dist/vue-select.css';
 
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
