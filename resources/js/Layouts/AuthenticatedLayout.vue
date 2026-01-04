@@ -46,6 +46,12 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     生徒管理
                                 </NavLink>
+                                <NavLink
+                                    :href="route('roles.index')"
+                                    :active="route().current('roles.index')"
+                                >
+                                    権限管理
+                                </NavLink>
                             </div>
                         </div>
 
