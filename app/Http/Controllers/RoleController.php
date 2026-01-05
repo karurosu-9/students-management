@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
+use App\Http\Resources\PermissionResource;
 use App\Http\Resources\RoleResource;
+use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -23,14 +25,20 @@ class RoleController extends Controller
 
     public function create()
     {
-        return Inertia::render('Roles/Create');
+        $permissions = PermissionResource::collection(Permission::all());
+
+        return Inertia::render('Roles/Create', [
+            'permissions' => $permissions
+        ]);
     }
 
     public function Store(StoreRoleRequest $request)
     {
-        Role::create([
+        $role = Role::create([
             'title' => $request->title
         ]);
+
+        $role->permissions()->sync($request->selectedPermissions);
 
         return redirect(route('roles.index'))->with([
             'status' => 'success',
@@ -40,8 +48,12 @@ class RoleController extends Controller
 
     public function edit(Role $role)
     {
+        // 該当の$roleに紐づくpermissionの取得
+        $role = $role->load('permissions');
+
         return Inertia::render('Roles/Edit', [
-            'role' => RoleResource::make($role) // 単数のデータをJSON化する場合は、make()を使用する
+            'role' => RoleResource::make($role), // 単数のデータをJSON化する場合は、make()を使用する
+            'permissions' => PermissionResource::collection(Permission::all()) // 編集画面での選択用
         ]);
     }
 
@@ -49,6 +61,8 @@ class RoleController extends Controller
     {
         $role->title = $request->title;
         $role->save();
+
+        $role->permissions()->sync($request->selectedPermissions);
 
         return redirect(route('roles.index'))->with([
             'status' => 'success',

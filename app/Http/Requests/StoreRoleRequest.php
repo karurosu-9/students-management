@@ -22,14 +22,16 @@ class StoreRoleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255']
+            'title' => ['required', 'string', 'max:255'],
+            'selectedPermissions' => ['array', 'required'],
         ];
     }
 
     public function attributes()
     {
         return [
-            'title' => '権限名'
+            'title' => '権限名',
+            'selectedPermissions' => '承認アクション'
         ];
     }
 
@@ -39,7 +41,10 @@ class StoreRoleRequest extends FormRequest
             // 権限のエラー文
             'title.required' => ':attributeが入力されていません。',
             'title.string' => ':ttributeは文字以外を入力しないでください。',
-            'title.max' => ':attributeは255文字以内で入力してください。'
+            'title.max' => ':attributeは255文字以内で入力してください。',
+
+            // 承認アクションのエラー
+            'selectedPermissions' => ':attributeが選択されていません。',
         ];
     }
 }

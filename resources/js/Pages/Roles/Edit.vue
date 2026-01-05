@@ -2,16 +2,25 @@
 import InputError from '@/Components/InputError.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import VSelect from 'vue-select';
 
 const props = defineProps({
     role: {
         type: Object,
         required: true // コントローラー側からのデータの受取り必須のオプション
-    }
+    },
+    permissions: {
+        type: Object,
+        required: true // コントローラー側からのデータの受取り必須のオプション
+    },
+    errors: Object
 });
 
-const form = useForm({                // useFormの場合はエラーメッセージの保持など色々と便利
+const form = useForm({                           // useFormの場合はエラーメッセージの保持など色々と便利
     title: props.role.data.title,                // router.postではなく、form.postでフォームの値を送信できる
+    selectedPermissions: props.role.data.permissions.map( // map()で、配列の中身をpermissionのidのみに変換する
+        (permission) => permission.id
+    ),
 });
 
 const updateRole = () => {
@@ -63,6 +72,25 @@ const updateRole = () => {
                                             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                             :class="{'text-red-900 focus:ring-red-500 focus:border-red-500 border-red-300' : form.errors.title}"
                                         />
+                                    </div>
+
+                                    <!-- permission -->
+                                    <div class="col-span-6 sm:col-span-3">
+                                        <InputError :message="form.errors.selectedPermissions" />
+                                        <label for="permissions" class="block text-sm font-medium text-gray-700">
+                                            Permissions
+                                        </label>
+
+                                        <!-- :reduceは、選択された承認アクションのIDだけを渡すようにする -->
+                                        <v-select
+                                            v-model="form.selectedPermissions"
+                                            multiple
+                                            :reduce="permission => permission.id"
+                                            :options="permissions.data"
+                                            label="title"
+                                            class="block w-full rounded-md shadow-sm py-2 focus:outline-none
+                                                   focus:ring-indigo-500 focus:border-indigo-500"
+                                        ></v-select>
                                     </div>
                                 </div>
                             </div>
