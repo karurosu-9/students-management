@@ -5,10 +5,12 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import FlashMessage from '@/Components/FlashMessage.vue';
 
 const showingNavigationDropdown = ref(false);
+
+const page = usePage();
 </script>
 
 <template>
@@ -41,14 +43,21 @@ const showingNavigationDropdown = ref(false);
                                     Dashboard
                                 </NavLink>
                                 <NavLink
+                                    v-if="page.props.can.student_access"
                                     :href="route('students.index')"
-                                    :active="route().current('students.index')"
+                                    :active="
+                                        route().current('students.index') ||
+                                        route().current('students.create') ||
+                                        route().current('students.edit')"
                                 >
                                     生徒管理
                                 </NavLink>
                                 <NavLink
                                     :href="route('roles.index')"
-                                    :active="route().current('roles.index')"
+                                    :active="
+                                        route().current('roles.index') ||
+                                        route().current('roles.create') ||
+                                        route().current('roles.edit')"
                                 >
                                     権限管理
                                 </NavLink>

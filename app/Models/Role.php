@@ -13,6 +13,7 @@ class Role extends Model
 
     protected $fillable = ['title'];
 
+    // 権限名の一元管理
     const ROLES = [
         'Admin' => 'Admin',
         'Public' => 'Public',
