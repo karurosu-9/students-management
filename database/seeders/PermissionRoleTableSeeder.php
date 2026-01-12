@@ -16,7 +16,10 @@ class PermissionRoleTableSeeder extends Seeder
     {
         $admin_permissions = Permission::all(); // 「管理者」は『全ての権限』を付与
 
-        $public_permissions = Permission::where('title', 'student_access')->get(); // 「一般」は『student_access』のみ許可
+        $public_permissions = Permission::whereIn('title', [ // whereIn()で検索条件にIN句を絡めている
+            'student_access',
+            'student_create'
+        ])->get(); // 「一般」は『student_access』のみ許可
 
         Role::find(1)->permissions()->attach($admin_permissions);
         Role::find(2)->permissions()->attach($public_permissions);
