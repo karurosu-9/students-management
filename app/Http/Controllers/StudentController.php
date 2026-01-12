@@ -9,12 +9,16 @@ use App\Http\Resources\StudentResource;
 use App\Models\Classes;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class StudentController extends Controller
 {
     public function index(Request $request)
     {
+         // ログインユーザーが『student_access』を持っているのかチェック
+        Gate::authorize('student_access');
+
         $searchWord = $request->search;
         $classId = $request->class_id;
 
@@ -42,6 +46,9 @@ class StudentController extends Controller
 
     public function create()
     {
+        // ログインユーザーが『student_create』を持っているのかチェック
+        Gate::authorize('student_create');
+
         // ResourceクラスでJSON化して全てのクラスを取得
         $classes = ClassesResource::collection(Classes::all());
 
@@ -67,6 +74,9 @@ class StudentController extends Controller
 
     public function edit(Student $student)
     {
+        // ログインユーザーが『student_delete』を持っているのかチェック
+        Gate::authorize('student_delete');
+
         $classes = ClassesResource::collection(Classes::all());
 
         $student->load('class', 'section');
@@ -93,6 +103,9 @@ class StudentController extends Controller
 
     public function destroy(Student $student)
     {
+        // ログインユーザーが『student_edit』を持っているのかチェック
+        Gate::authorize('student_edit');
+
         $student->delete();
 
         return redirect(route('students.index'))->with([
