@@ -74,8 +74,8 @@ class StudentController extends Controller
 
     public function edit(Student $student)
     {
-        // ログインユーザーが『student_delete』を持っているのかチェック
-        Gate::authorize('student_delete');
+        // ログインユーザーが『student_edit』を持っているのかチェック
+        Gate::authorize('student_edit');
 
         $classes = ClassesResource::collection(Classes::all());
 
@@ -103,8 +103,8 @@ class StudentController extends Controller
 
     public function destroy(Student $student)
     {
-        // ログインユーザーが『student_edit』を持っているのかチェック
-        Gate::authorize('student_edit');
+        // ログインユーザーが『student_delete』を持っているのかチェック
+        Gate::authorize('student_delete');
 
         $student->delete();
 
