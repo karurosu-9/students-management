@@ -17,6 +17,27 @@ const props = defineProps({
 const search = ref(props.filters?.search ?? ""); // 検索ワード
 const class_id = ref(props.filters?.class_id ?? ""); // クラスでの絞り込み
 
+/**
+ * usePage()の中身は
+ * component: "Students/Index",
+ * url: "/students?search=abc",
+ * props: {
+ *   students: {...},
+ *   classes: {...},
+ *   filters: {...},
+ *   auth: {
+ *     user: {...}
+ *   },
+ *   can: {
+ *     student_create: true,
+ *     student_edit: false,
+ *   },
+ *   flash: {
+ *     message: "保存しました"
+ *   }
+ * }
+ * などのInertiaが既に持っている情報が入っている
+ */
 const page = usePage();
 
 const searchCustomers = () => {
@@ -46,7 +67,7 @@ const deleteForm = useForm();
 const deleteStudent = (studentId) => {
     if (confirm("この生徒を削除してもよろしいですか？")) {
         deleteForm.delete(route("students.destroy", studentId), { // deleteForm.delete()はform.delete()のようなことをしている
-            preserveScroll: true // 画面の削除後もスクロール位置を保つ
+            preserveScroll: true // 画面の削除後もスクロール位置を保つオプション
         });
     }
 };
@@ -75,6 +96,7 @@ const deleteStudent = (studentId) => {
                         </div>
 
                         <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+                            <!-- canはHandleInertiaRequestsクラスに定義している内容をcan.student_createとして呼び出している -->
                             <Link
                                 v-if="page.props.can.student_create"
                                 :href="route('students.create')"
