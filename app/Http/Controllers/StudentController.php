@@ -16,8 +16,10 @@ class StudentController extends Controller
 {
     public function index(Request $request)
     {
-         // ログインユーザーが『student_access』を持っているのかチェック
-        Gate::authorize('student_access');
+         // ログインユーザーにアクセス権限があるのかチェック
+        if (Gate::denies('student_access')) {
+            abort(Response::HTTP_FORBIDDEN, '権限がありません。');
+        }
 
         $searchWord = $request->search;
         $classId = $request->class_id;
@@ -46,8 +48,10 @@ class StudentController extends Controller
 
     public function create()
     {
-        // ログインユーザーが『student_create』を持っているのかチェック
-        Gate::authorize('student_create');
+        // ログインユーザーにアクセス権限があるのかチェック
+        if (Gate::denies('student_create')) {
+            abort(Response::HTTP_FORBIDDEN, '権限がありません。');
+        }
 
         // ResourceクラスでJSON化して全てのクラスを取得
         $classes = ClassesResource::collection(Classes::all());
@@ -74,8 +78,10 @@ class StudentController extends Controller
 
     public function edit(Student $student)
     {
-        // ログインユーザーが『student_edit』を持っているのかチェック
-        Gate::authorize('student_edit');
+        // ログインユーザーにアクセス権限があるのかチェック
+        if (Gate::denies('student_edit')) {
+            abort(Response::HTTP_FORBIDDEN, '権限がありません。');
+        }
 
         $classes = ClassesResource::collection(Classes::all());
 
@@ -103,8 +109,10 @@ class StudentController extends Controller
 
     public function destroy(Student $student)
     {
-        // ログインユーザーが『student_delete』を持っているのかチェック
-        Gate::authorize('student_delete');
+        // ログインユーザーにアクセス権限があるのかチェック
+        if (Gate::denies('student_delete')) {
+            abort(Response::HTTP_FORBIDDEN, '権限がありません。');
+        }
 
         $student->delete();
 
