@@ -1,5 +1,5 @@
 <script setup>
-import { Link, Head, useForm, router } from "@inertiajs/vue3";
+import { Link, Head, useForm, router, usePage } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Pagination from "@/Components/Pagination.vue";
 
@@ -12,6 +12,29 @@ const props = defineProps({
 
 // コントローラーのdestroyアクションに送信するために変数にしている
 const deleteForm = useForm();
+
+/**
+ * usePage()の中身は
+ * component: "Students/Index",
+ * url: "/students?search=abc",
+ * props: {
+ *   students: {...},
+ *   classes: {...},
+ *   filters: {...},
+ *   auth: {
+ *     user: {...}
+ *   },
+ *   can: {
+ *     student_create: true,
+ *     student_edit: false,
+ *   },
+ *   flash: {
+ *     message: "保存しました"
+ *   }
+ * }
+ * などのInertiaが既に持っている情報が入っている
+ */
+const page = usePage();
 
 const deleteRole = (roleId) => {
     if (confirm("この権限を削除してもよろしいですか？")) {
@@ -46,6 +69,7 @@ const deleteRole = (roleId) => {
 
                         <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
                             <Link
+                                v-if="page.props.can.role_create"
                                 :href="route('roles.create')"
                                 class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
                             >

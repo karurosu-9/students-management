@@ -9,12 +9,19 @@ use App\Http\Resources\RoleResource;
 use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\Response;
 
 class RoleController extends Controller
 {
     public function index()
     {
+        // ログインユーザーにアクセス権限があるのかチェック
+        if (Gate::denies('role_access')) {
+            abort(Response::HTTP_FORBIDDEN, '権限がありません。');
+        }
+
         // 複数のデータをJSON化する場合は、collection()を使用
         $roles = RoleResource::collection(Role::all());
 
@@ -25,6 +32,11 @@ class RoleController extends Controller
 
     public function create()
     {
+        // ログインユーザーにアクセス権限があるのかチェック
+        if (Gate::denies('role_create')) {
+            abort(Response::HTTP_FORBIDDEN, '権限がありません。');
+        }
+
         $permissions = PermissionResource::collection(Permission::all());
 
         return Inertia::render('Roles/Create', [
@@ -48,6 +60,11 @@ class RoleController extends Controller
 
     public function edit(Role $role)
     {
+        // ログインユーザーにアクセス権限があるのかチェック
+        if (Gate::denies('role_edit')) {
+            abort(Response::HTTP_FORBIDDEN, '権限がありません。');
+        }
+
         // 該当の$roleに紐づくpermissionの取得
         $role = $role->load('permissions');
 
@@ -72,6 +89,11 @@ class RoleController extends Controller
 
     public function destroy(Role $role)
     {
+        // ログインユーザーにアクセス権限があるのかチェック
+        if (Gate::denies('role_delete')) {
+            abort(Response::HTTP_FORBIDDEN, '権限がありません。');
+        }
+
         $role->delete();
 
         return redirect(route('roles.index'))->with([
